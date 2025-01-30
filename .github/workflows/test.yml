@@ -26,5 +26,6 @@ jobs:
           pip install pytest
           pip install -r requirements.txt || echo "No dependencies"
 
-      - name: 🧪 Run Tests
-        run: pytest ween/tests/ --disable-warnings
+        - name: 🧪 Run Tests
+        run: pytest ween/tests/ --disable-warnings --maxfail=5 -v
+
