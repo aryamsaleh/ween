@@ -8,7 +8,7 @@ app = Flask(__name__)
 def client():
     app.testing = True
     with app.test_client() as client:
-        with app.app_context():  # 🔹 إضافة هذا لإصلاح الخطأ
+        with app.app_context():
             yield client
 
 # كود القالب الذي نريد اختباره
@@ -23,16 +23,28 @@ TEMPLATE = """
 {% endfor %}
 """
 
-def test_render_template():
+# ✅ اختبار ناجح: يجب أن يمر
+def test_render_template_pass():
     data = [
         {"name": "Luxury Hotel", "price": 500},
         {"name": "Budget Hostel", "price": 80},
     ]
     
-    with app.app_context():  # 🔹 إضافة هذا لحل المشكلة
+    with app.app_context():
         rendered = render_template_string(TEMPLATE, accommodations=data)
     
     assert "Luxury Hotel" in rendered
     assert "Premium" in rendered
     assert "Budget Hostel" in rendered
     assert "Standard" in rendered
+
+# ❌ اختبار فاشل عمدًا: يجب أن يفشل لإظهار الفشل في `GitHub Actions`
+def test_render_template_fail():
+    data = [
+        {"name": "Luxury Hotel", "price": 500},
+    ]
+    
+    with app.app_context():
+        rendered = render_template_string(TEMPLATE, accommodations=data)
+    
+    assert "Non-Existent Hotel" in rendered  # 🔹 هذا الشرط سيفشل دائمًا
